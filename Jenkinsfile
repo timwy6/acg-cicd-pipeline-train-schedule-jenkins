@@ -6,6 +6,7 @@ pipeline {
                 echo 'Running the build process'
                 sh './gradlew build'
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
+                echo 'done done done.'
             }
         }
     }
