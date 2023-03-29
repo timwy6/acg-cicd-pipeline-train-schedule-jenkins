@@ -32,7 +32,7 @@ pipeline {
                                     patternSeparator: '[, ]+', 
                                     remoteDirectory: '/tmp', 
                                     remoteDirectorySDF: false, 
-                                    removePrefix: '', 
+                                    removePrefix: 'dist/', 
                                     sourceFiles: 'dist/trainSchedule.zip'
                                 )
                             ], 
