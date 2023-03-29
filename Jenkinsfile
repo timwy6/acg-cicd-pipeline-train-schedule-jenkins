@@ -24,7 +24,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false, 
                                     excludes: '', 
-                                    execCommand: 'echo i am in $(hostname)', 
+                                    execCommand: 'sudo systemctl stop train-schedule && rm -rf /opt/train-schedule && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo systemctl start train-schedule', 
                                     execTimeout: 120000, 
                                     flatten: false, 
                                     makeEmptyDirs: false,
