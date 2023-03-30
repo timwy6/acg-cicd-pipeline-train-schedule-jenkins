@@ -10,7 +10,7 @@ pipeline {
         }
         stage('deploy to Staging'){
             steps {
-                withCredentials([usernamePassword(credentialsId: 'staging_id', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'staging - id', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     sshPublisher(
                         publishers: [
                             sshPublisherDesc(
@@ -25,7 +25,7 @@ pipeline {
                                     sshTransfer(
                                         cleanRemote: false, 
                                         excludes: '', 
-                                        execCommand: 'sudo systemctl stop train-schedule && rm -rf /opt/train-schedule/* && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo systemctl start train-schedule', 
+                                        execCommand: 'sudo systemctl stop train-schedule && rm -rf /opt/train-schedule/* && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo systemctl start train-schedule && echo ${USERNAME}:${USERPASS} > /tmp/staging.txt', 
                                         execTimeout: 120000, 
                                         flatten: false, 
                                         makeEmptyDirs: false,
