@@ -10,7 +10,7 @@ pipeline {
         }
         stage('deploy to Staging'){
             steps {
-                withCredentials([usernamePassword(credentialsId: 'staging - id', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'staging_id', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     sshPublisher(
                         publishers: [
                             sshPublisherDesc(
