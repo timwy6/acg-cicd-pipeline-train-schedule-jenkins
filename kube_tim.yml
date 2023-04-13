@@ -5,7 +5,7 @@ metadata:
   namespace: tim
 spec:
   selector:
-    team: authn
+    hello: cake
   type: NodePort      # ClusterIP 不能用喔。 说port有问题.
   sessionAffinity: None
   sessionAffinityConfig:
@@ -24,15 +24,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  train-app-deploy
+  name: train-app-deploy
   namespace: tim
   labels:
-    app:  train-app-metadata
+    app: train-app-metadata
     team: authn
 spec:
   selector:
     matchLabels:
       app: train-app-template
+      hello: cake
   replicas: 1
   strategy:
     rollingUpdate:
@@ -42,7 +43,8 @@ spec:
   template:
     metadata:
       labels:
-        app:  train-app-template
+        app: train-app-template
+        hello: cake
     spec:
       imagePullSecrets:
       - name: regcred   
@@ -51,8 +53,8 @@ spec:
           # - Init containers always run to completion.
           # - Each init container must complete successfully before the next one starts.
       containers:
-      - name:  train-schedule
-        image:  $IMAGE:$BUILD_NUMBER
+      - name: train-schedule
+        image: $IMAGE:$BUILD_NUMBER
         resources:
           requests:
             cpu: 100m
@@ -84,8 +86,8 @@ spec:
         #       name: my.app
         #       key: DB_HOST
         ports:
-        - containerPort:  8080
-          name:  my-app       
+        - containerPort: 8080
+          name: my-app       
       #   volumeMounts:
       #   - name: localtime
       #     mountPath: /etc/localtime
