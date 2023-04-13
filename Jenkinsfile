@@ -13,9 +13,9 @@ pipeline {
             }
         }
         stage('docker build'){
-            when{
-                branch 'master'
-            }
+            // when{
+            //     branch 'master'      // 这个只对 multi brnach pipeline 才有效。
+            // }
             steps {
                 script {
                     app = docker.build(IMAGE)
