@@ -12,6 +12,28 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
+        stage('docker build'){
+            when{
+                branch 'master'
+            }
+            steps {
+                script {
+                    app = docker.build(IMAGE)
+                    app.inside{
+                        sh 'hello world'
+                    }
+                    sh "The BUILD_NUMBER is: ${env.BUILD_NUMBER}"
+                }
+            }
+        }
+        // stage('docker push') {
+        //     when {
+        //         branch 'master'
+        //     }
+        //     steps {
+
+        //     }
+        // }
         stage('deploy to Staging via k8s'){
             steps {
                 echo 'Applying k8s deployment and service'
