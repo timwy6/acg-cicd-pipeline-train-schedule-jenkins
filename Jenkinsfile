@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment{
         IMAGE = 'timwy6/acg'
-        BUILD_NUMBER = 'train-0.04'
+        BUILD_NUMBER = 'train-1234'
     }
     stages {
         stage('build'){
@@ -17,13 +17,8 @@ pipeline {
             //     branch 'master'      // 这个只对 multi brnach pipeline 才有效。
             // }
             steps {
-                script {
-                    app = docker.build(IMAGE)
-                    app.inside{
-                        sh 'hello world'
-                    }
-                    sh "The BUILD_NUMBER is: ${env.BUILD_NUMBER}"
-                }
+                sh 'echo $BUILD_NUMBER'
+                sh 'docker build -t $IMAGE:$BUILD_NUMBER .'
             }
         }
         // stage('docker push') {
