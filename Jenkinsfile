@@ -2,7 +2,11 @@ pipeline {
     agent any
     environment{
         IMAGE = 'timwy6/acg'
-        BUILD_NUMBER = 'train-1234'
+        // BUILD_NUMBER = sh '`git rev-parse HEAD | awk \'{print substr($0, 0, 6)}\'`'
+        BUILD_NUMBER = sh (
+            script: 'git rev-parse HEAD | awk \'{print substr($0, 0, 6)}\'',    // take the first 6 characters from commit hash as image tag number
+            returnStdout: true
+        ).trim()
     }
     stages {
         stage('build'){
@@ -21,14 +25,16 @@ pipeline {
                 sh 'docker build -t $IMAGE:$BUILD_NUMBER .'
             }
         }
-        // stage('docker push') {
-        //     when {
-        //         branch 'master'
-        //     }
-        //     steps {
-
-        //     }
-        // }
+        stage('docker push') {
+            steps {
+                
+                withCredentials([usernamePassword(credentialsId: 'docker_hub_id', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                    sh 'docker login -u $USERNAME -p $USERPASS https://index.docker.io/v1/'   
+                }
+                
+                sh 'docker push $IMAGE:$BUILD_NUMBER'
+            }
+        }
         stage('deploy to Staging via k8s'){
             steps {
                 echo 'Applying k8s deployment and service'
