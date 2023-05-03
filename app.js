@@ -6,12 +6,24 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var trainsRouter = require('./routes/trains');
+var metricsRouter = require('./routes/metrics');
+
+// setting up /metrics endpoint.
+const Prometheus = require('prom-client');
+const httpRequestDurationMicroseconds = new Prometheus.Histogram({
+  name: 'http_request_duration_ms',
+  help: 'Duration of HTTP requests in ms',
+  labelNames: ['method', 'route', 'code'],
+  buckets: [0.10, 5, 15, 50, 100, 200, 300, 400, 500]
+})
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -21,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/trains', trainsRouter);
+app.use('/metrics', metricsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -37,5 +50,13 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.use((req, res, next) => {
+  const responseInMs = Date.now() - res.locals.startEpoch
+  httpRequestDurationMicroseconds.labels(req.method, req.originalUrl, res.statusCode)
+  .observe(responseInMs)
+
+  next()
+})
 
 module.exports = app;

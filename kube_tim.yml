@@ -14,7 +14,7 @@ spec:
   ports:
   - name: train-app
     protocol: TCP
-    port: 8080
+    port: 5000
     targetPort: 
     # If you set the `spec.type` field to `NodePort` and you want a specific port number,
     # you can specify a value in the `spec.ports[*].nodePort` field.
