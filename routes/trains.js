@@ -9,6 +9,7 @@ var db = low(adapter)
 /* GET trains listing. */
 router.get('/', function(req, res, next) {
   res.send(db.get('trains').sortBy('name').value());
+  next(); // 这个 next 就表示在 /metrics 里包含 /trains 的 stat
 });
 
 module.exports = router;

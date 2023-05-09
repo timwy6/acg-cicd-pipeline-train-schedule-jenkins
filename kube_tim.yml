@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: train-app-service
   namespace: tim
+  annotations:
+    prometheus.io/scrape: 'true'    # 这个 annotation 是话给 prometheus听，让 prometheus 去 scape /metrics 里的数据。
 spec:
   selector:
     hello: cake
