@@ -36,7 +36,7 @@ spec:
     matchLabels:
       app: train-app-template
       hello: cake
-  replicas: 1
+  replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -59,19 +59,20 @@ spec:
         image: $IMAGE:$BUILD_NUMBER
         resources:
           requests:
-            cpu: 100m
+            cpu: 200m
             memory: 100Mi
-          limits:
-            cpu: 100m
-            memory: 100Mi
-        # livenessProbe:
-        #   tcpSocket:
-        #     port: 80
-        #   initialDelaySeconds: 5
-        #   timeoutSeconds: 5
-        #   successThreshold: 1
-        #   failureThreshold: 3
-        #   periodSeconds: 10
+          # limits:
+          #   cpu: 100m
+          #   memory: 100Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
         # readinessProbe:
         #   httpGet:
         #     path: /_status/healthz
@@ -99,3 +100,21 @@ spec:
       #       path: /usr/share/zoneinfo/Asia/Shanghai
       restartPolicy: Always
 
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoScaler
+metadata:
+  name: train-schedule-hpa
+  namespace: tim
+spec:
+  scalTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: train-app-deploy
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resources
+      resource:
+        name: cpu
+        targetAverageUtilization: 50  # average cpu usage 50% across all pods
