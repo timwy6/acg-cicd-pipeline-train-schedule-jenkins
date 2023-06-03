@@ -102,19 +102,19 @@ spec:
 
 ---
 apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoScaler
+kind: HorizontalPodAutoscaler
 metadata:
   name: train-schedule-hpa
   namespace: tim
 spec:
-  scalTargetRef:
+  scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: train-app-deploy
   minReplicas: 1
   maxReplicas: 4
   metrics:
-    - type: Resources
-      resource:
-        name: cpu
-        targetAverageUtilization: 50  # average cpu usage 50% across all pods
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 50  # average cpu usage 50% across all
