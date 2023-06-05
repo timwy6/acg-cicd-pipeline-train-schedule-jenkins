@@ -35,10 +35,25 @@ pipeline {
                 sh 'docker push $IMAGE:$BUILD_NUMBER'
             }
         }
+        stage("canary deployment"){
+            environment{
+                CANARY_REPLICAS = 2
+            }
+            steps{
+                echo "deploying canary changes"
+                sh 'envsubst < kube_tim_canary.yml | kubectl apply -f -'
+            }
+
+        }
         stage('deploy to Staging via k8s'){
+            input 'Canary Testing looks all good?'
+            environment{
+                CANARY_REPLICAS = 0
+            }
             steps {
                 echo 'Applying k8s deployment and service'
                 sh 'envsubst < kube_tim.yml | kubectl apply -f -'
+                sh 'envsubst < kube_tim_canary.yml | kubectl apply -f -'
             }
         }
         // stage('deploy to Prod'){
