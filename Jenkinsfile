@@ -46,11 +46,11 @@ pipeline {
 
         }
         stage('deploy to Staging via k8s'){
-            input 'Canary Testing looks all good?'
             environment{
                 CANARY_REPLICAS = 0
             }
             steps {
+                input 'Canary Testing looks all good?'
                 echo 'Applying k8s deployment and service'
                 sh 'envsubst < kube_tim.yml | kubectl apply -f -'
                 sh 'envsubst < kube_tim_canary.yml | kubectl apply -f -'
